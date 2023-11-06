@@ -1,0 +1,263 @@
+version: 2
+models:
+
+# Modelling
+
+  - name: dim_address_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - address_type
+            - addr_line_1
+            - addr_line_2
+            - city
+            - district
+            - state
+            - country
+            - postal_code
+
+  - name: dim_brand_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - brand_name
+            - year
+            - month
+    columns:
+      - name: brand_name
+        tests:
+          - accepted_values:
+              values: var('brand_names_list')
+    
+    
+  - name: dim_customer_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - customer_id
+            - email
+
+  - name: dim_orders_shopify
+    config:
+      materialized: table
+    columns:
+      - name: order_id
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: platform_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: order_channel
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_platform_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - platform_name
+            - store_name
+
+  - name: dim_product_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - product_id
+            - sku
+    columns:
+      - name: product_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: sku
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: product_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: seller
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+
+  - name: dim_shipment_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - shipment_id
+            - shipment_item_id
+            - sku
+            - product_id
+            - tracking_number
+    columns:
+      - name: order_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: platform_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_transactions_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - transaction_id
+    columns:
+      - name: order_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: transaction_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: platform_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: transaction_stage
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: fact_finances_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - platform_name
+            - brand
+            - store_name
+            - product_id
+            - sku
+            - date
+            - amount_type
+            - transaction_type
+            - charge_type
+          
+    columns:
+      - name: date
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: brand
+        tests:
+          - relationships:
+              to: ref('dim_brand_shopify')
+              field: brand_name       
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('dim_orders_shopify')
+              field: order_id
+      - name: platform_name
+        tests:
+          - relationships:
+              to: ref('dim_orders_shopify')
+              field: platform_name
+      - name: platform_name
+        tests:
+          - relationships:
+              to: ref('dim_platform_shopify')
+              field: platform_name
+      - name: store_name
+        tests:
+          - relationships:
+              to: ref('dim_platform_shopify')
+              field: store_name
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('dim_product_shopify')
+              field: product_id
+              config:
+                where: "length(product_id) != 0"
+      - name: sku
+        tests:
+          - relationships:
+              to: ref('dim_product_shopify')
+              field: sku
+              config:
+                where: "length(sku) != 0"
+
+  - name: fact_order_lines_shopify
+    config:
+      materialized: table
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand
+            - customer_id
+            - product_id
+            - sku
+            - platform_name
+            - store_name
+            - order_id
+            - subscription_id
+            - is_cancelled
+            - transaction_type
+            - reason
+         
+    columns:
+      
+      - name: date
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - relationships:
+              to: ref('dim_brand_shopify')
+              field: brand_name
+                
+      - name: platform_name
+        tests:
+          - relationships:
+              to: ref('dim_platform_shopify')
+              field: platform_name
