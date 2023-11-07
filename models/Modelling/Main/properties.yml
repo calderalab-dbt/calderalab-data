@@ -1,0 +1,535 @@
+version: 2
+models:
+
+# Modelling
+
+  - name: model_watermarks
+    config:
+      materialized: table
+
+  - name: dim_ads
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ad_key']
+    
+      
+  - name: dim_adgroup
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['adgroup_key']
+      cluster_by: ['adgroup_key']
+
+  - name: dim_brand
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['brand_key','year','month']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - brand_key
+            - year
+            - month
+              
+
+  - name: dim_campaign
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['campaign_key']
+    
+
+  - name: dim_utm_channel
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['utm_key']
+    columns:
+      - name: source
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: medium
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: campaign
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: content
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: keyword
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      
+
+  - name: dim_commissions
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['brand_name','start_date','revenue_min','revenue_max']
+    columns:
+      - name: brand_name
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_address
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['address_key']
+    columns:
+      - name: address_key
+        tests:
+          - unique:
+              config:
+                severity: error
+
+  - name: dim_customer
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['customer_key']
+    columns:
+      - name: customer_key
+        tests:
+          - unique:
+              config:
+                severity: error
+
+  - name: dim_vendor
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['vendor_key']
+
+  - name: dim_orders
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_key']
+      merge_exclude_columns: ['ship_address_key','bill_address_key']
+
+    columns:
+      - name: order_key
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: platform_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: order_channel
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_event
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['event_key']
+    columns:
+      - name: event_name
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: landing_page_path
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_flow
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['flow_key']
+    columns:
+      - name: flow_id
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: flow_type
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: flow_name
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+      - name: ad_channel
+        tests:
+          - unique:
+              config:
+                severity: error
+          - not_null:
+              config:
+                severity: error
+    
+
+  - name: dim_platform
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['platform_key']
+    columns:
+      - name: platform_key
+        tests:
+          - unique:
+              config:
+                severity: error
+      - name: platform_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: store_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+    
+      
+
+  - name: dim_shipment
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_key','product_key','fulfillment_center_key']
+
+  - name: dim_fulfillment_center
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['fulfillment_center_key']
+
+  - name: dim_product
+    config:
+      materialized: table
+    columns:
+      - name: product_key
+        tests:
+          - unique:
+              config:
+                severity: error
+      - name: product_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: sku
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: product_name
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: seller
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_targeting
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['targeting_key']
+    
+  - name: dim_transactions
+    config: 
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_key','transaction_id']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_key
+            - transaction_id
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: order_platform
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: transaction_stage
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: dim_subscription
+    config:
+      materialized: table
+  
+  - name: fact_advertising
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','campaign_key','adgroup_key','ad_key','flow_key','brand_key','platform_key','product_key']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['brand_key','campaign_key','adgroup_key']
+
+      
+
+  - name: fact_finances
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_key','brand_key','platform_key','product_key','date','amount_type','transaction_type','charge_type']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key','order_key'] 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_key
+            - brand_key
+            - platform_key
+            - product_key
+            - date
+            - amount_type
+            - transaction_type
+            - charge_type
+          
+    columns:
+      - name: date
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: brand_key
+        tests:
+          - relationships:
+              to: ref('dim_brand')
+              field: brand_key       
+      - name: order_key
+        tests:
+          - relationships:
+              to: ref('dim_orders')
+              field: order_key
+      - name: platform_key
+        tests:
+          - relationships:
+              to: ref('dim_platform')
+              field: platform_key
+      - name: product_key
+        tests:
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
+              config:
+                where: "product_key!='855e56207780b526f03525df6d2644d0'"
+      
+      
+  - name: fact_inventory
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_key','platform_key','product_key','fulfillment_center_key','fulfillment_channel','type','event']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key'] 
+    
+             
+
+  - name: fact_order_lines
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_key','product_key','platform_key','order_key','subscription_key','transaction_type','reason']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key'] 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_key
+            - product_key
+            - platform_key
+            - order_key
+            - transaction_type
+            - reason
+         
+    columns:
+      
+      - name: date
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand_key
+        tests:
+          - relationships:
+              to: ref('dim_brand')
+              field: brand_key
+                
+      - name: platform_key
+        tests:
+          - relationships:
+              to: ref('dim_platform')
+              field: platform_key
+    
+      - name: order_key
+        tests:
+          - relationships:
+              to: ref('dim_orders')
+              field: order_key
+
+
+
+  - name: fact_orders
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_key','platform_key','order_key','transaction_type']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key'] 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_key
+            - product_key
+            - platform_key
+            - order_key
+            - transaction_type
+            - reason
+         
+    columns:
+      
+      - name: date
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand_key
+        tests:
+          - relationships:
+              to: ref('dim_brand')
+              field: brand_key
+                
+      - name: platform_key
+        tests:
+          - relationships:
+              to: ref('dim_platform')
+              field: platform_key
+    
+      - name: order_key
+        tests:
+          - relationships:
+              to: ref('dim_orders')
+              field: order_key
+          
+  - name: fact_purchase_orders
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_date','order_key','product_key','platform_key','brand_key']
+      partition_by: { 'field': 'order_date', 'data_type': 'date' }
+      cluster_by: ['order_date','brand_key'] 
+
+      
+
+  - name: fact_sales_distribution
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_date','brand_key','product_key','platform_key','distribution_view']
+      partition_by: { 'field': 'order_date', 'data_type': 'date' }
+      cluster_by: ['order_date','brand_key']
+
+ 
+
+  - name: fact_targeting
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','campaign_key','adgroup_key','ad_key','brand_key','platform_key','targeting_key']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key','campaign_key','adgroup_key']
+   
+      
+
+  - name: fact_traffic
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','product_key','brand_key','platform_key','utm_key','event_key']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_key'] 
+
+      
+       
+      
+     
+     
+      
+              
+      
+        
