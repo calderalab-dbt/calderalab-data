@@ -14,9 +14,9 @@ vars:
   raw_database: "caldera-labs"
   raw_schema: "Caldera_Labs"
   mdl_database: "caldera-labs"
-  mdl_schema: "edm_main"
+  mdl_schema: "dev_edm_prep"
  
-  prerequisite_mdl_schema: "edm_prep"
+  prerequisite_mdl_schema: "dev_edm_prep"
  
   # Set the models to False in case you dont want them to be materialised
  
