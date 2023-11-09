@@ -1,0 +1,981 @@
+version: 2
+models:
+
+# Presentation
+
+  - name: commissions
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['month','year','commission_type','flat_rate','revenue_min','revenue_max']
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: commission_type
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+          # - dbt_expectations.expect_row_values_to_have_recent_data:
+          #     datepart: month
+          #     interval: 1
+          #     config:
+          #       severity: warn
+      - name: year
+        tests:
+          - not_null
+      - name: commission_rate
+        tests:
+          - not_null
+      - name: platform_name
+        tests:
+          - not_null
+      - name: currency_code
+        tests:
+          - not_null
+      - name: flat_rate
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - month
+            - year
+            - commission_type
+            - flat_rate
+            - revenue_min
+            - revenue_max
+        
+  - name: customer
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','email','platform_name','store_name','product_id','product_name','sku','order_id']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','email'] 
+    columns:
+      - name: email
+        tests:
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: acquisition_date
+        tests:
+          - not_null
+      - name: order_month
+        tests:
+          - not_null
+      - name: last_order_date
+        tests:
+          - not_null
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: currency_code
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - email
+            - platform_name
+            - store_name
+            - product_id
+            - product_name
+            - sku
+            - order_id
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: count(distinct email)
+          compare_model: ref("dim_customer")
+          compare_expression: count(distinct email)
+          group_by: [acquisition_date]
+          compare_group_by: [acquisition_date]
+
+  - name: campaign_targeting
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','ad_channel','platform_name','store_name','campaign_name','adgroup_name','targeting_type','targeting_text','match_type','search_term']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','ad_channel','campaign_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: ad_channel
+        tests:
+          - not_null
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: campaign_name
+        tests:
+          - not_null
+      - name: currency_code
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - ad_channel
+            - platform_name
+            - store_name
+            - campaign_name
+            - targeting_text
+            - search_term
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(clicks)
+          compare_model: ref("fact_targeting")
+          compare_expression: sum(clicks)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: inventory
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','event','type','platform_name','store_name','product_id','sku','product_name']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','event'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: product_id
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - event
+            - type
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+            - product_name
+
+  - name: inventory_insights_amazon
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','product_id','sku','product_name']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','product_name'] 
+
+  - name: profit_and_loss
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','amount_type','transaction_type','charge_type','sku','product_id']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','charge_type'] 
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: charge_type
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: currency_code
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - brand_name
+            - platform_name
+            - store_name
+            - date
+            - charge_type
+            - product_id
+            - sku
+            - currency_code
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(amount)
+          compare_model: ref("fact_finances")
+          compare_expression: sum(amount)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: market_basket_analysis
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','order_id','product_name','sku']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: order_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - platform_name
+            - order_id
+            - product_name
+            - sku
+
+  - name: marketing_deepdive
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','ad_channel','campaign_type','platform_name','store_name','product_id','sku','campaign_id','campaign_name','campaign_placement','portfolio_name']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','ad_channel','product_id'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: portfolio_name
+        tests:
+          - not_null
+      - name: ad_channel
+        tests:
+          - not_null
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: campaign_Name
+        tests:
+          - not_null
+      - name: campaign_placement
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - ad_channel
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+            - campaign_name
+            - campaign_placement
+            - portfolio_name
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(clicks)
+          compare_model: ref("fact_advertising")
+          compare_expression: sum(clicks)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: marketing_overview
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','ad_channel','platform_name','store_name','portfolio_name']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name','ad_channel'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: portfolio_name
+        tests:
+          - not_null
+      - name: ad_channel
+        tests:
+          - not_null
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - ad_channel
+            - platform_name
+            - store_name
+            - portfolio_name
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(clicks)
+          compare_model: ref("fact_advertising")
+          compare_expression: sum(clicks)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: product_insights
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: product_id
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: sub_category
+        tests:
+          - not_null
+      - name: mrp
+        tests:
+          - not_null
+      - name: cogs
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(units_sold)
+          compare_model: ref("fact_order_lines")
+          compare_expression: sum(quantity)
+          group_by: [date]
+          compare_group_by: [date]
+          compare_row_condition: transaction_type = "Order"
+
+  - name: purchase_order_insights
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_date','brand_name','platform_name','store_name','product_id','purchase_order_number']
+      partition_by: { 'field': 'order_date', 'data_type': 'date' }
+      cluster_by: ['order_date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: order_date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(ordered_quantity_amount)
+          compare_model: ref("fact_purchase_orders")
+          compare_expression: sum(ordered_quantity_amount)
+          group_by: [order_date]
+          compare_group_by: [order_date]
+
+  - name: sales_channel_analysis
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','order_channel']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: order_channel
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - platform_name
+            - store_name
+            - order_channel
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(quantity)
+          compare_model: ref("fact_orders")
+          compare_expression: sum(quantity)
+          group_by: [date]
+          compare_group_by: [date]
+          compare_row_condition: transaction_type = "Order"
+
+  - name: sales_deepdive
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(quantity)
+          compare_model: ref("fact_order_lines")
+          compare_expression: sum(quantity)
+          group_by: [date]
+          compare_group_by: [date]
+          compare_row_condition: transaction_type = "Order"
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(clicks)
+          compare_model: ref("fact_advertising")
+          compare_expression: sum(clicks)
+          group_by: [date]
+          compare_group_by: [date]
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(sessions)
+          compare_model: ref("fact_traffic")
+          compare_expression: sum(sessions)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: sales_overview
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      # - name: brand_name
+      #   tests:
+      #     - not_null
+      #     - accepted_values:
+      #         values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            # - brand_name
+            - platform_name
+            - store_name
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(quantity)
+          compare_model: ref("fact_orders")
+          compare_expression: sum(quantity)
+          group_by: [date]
+          compare_group_by: [date]
+          compare_row_condition: transaction_type = "Order"
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(sessions)
+          compare_model: ref("fact_traffic")
+          compare_expression: sum(sessions)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: subscriptions_overview
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['created_at','brand_name','platform_name','store_name','sku','subscription_id']
+      partition_by: { 'field': 'created_at', 'data_type': 'date' }
+      cluster_by: ['created_at','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: subscription_id
+        tests:
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: utm_source
+        tests:
+          - not_null
+      - name: utm_medium
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - created_at
+            - brand_name
+            - platform_name
+            - store_name
+            - sku
+            - subscription_id
+
+  - name: traffic_analysis
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','product_id','brand_name','platform_name','store_name','event_name','source','medium','campaign','keyword','content','landing_page_path']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - product_id
+            - brand_name
+            - platform_name
+            - store_name
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(sessions)
+          compare_model: ref("fact_traffic")
+          compare_expression: sum(sessions)
+          group_by: [date]
+          compare_group_by: [date]
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(page_views)
+          compare_model: ref("fact_traffic")
+          compare_expression: sum(page_views)
+          group_by: [date]
+          compare_group_by: [date]
+
+  - name: vendor_central
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['order_date','brand_name','platform_name','store_name','product_id','distribution_view']
+      partition_by: { 'field': 'order_date', 'data_type': 'date' }
+      cluster_by: ['order_date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: distribution_view
+        tests:
+          - not_null
+      - name: order_date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+            - distribution_view
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: sum(ordered_revenue)
+          compare_model: ref("fact_sales_distribution")
+          compare_expression: sum(ordered_revenue)
+          group_by: [order_date]
+          compare_group_by: [order_date]
+
+  - name: date_browser_weekly
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['week_start_date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'week_start_date', 'data_type': 'date' }
+      cluster_by: ['week_start_date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: week_start_date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 7
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - week_start_date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+
+  - name: date_browser_monthly
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['month_start_date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'month_start_date', 'data_type': 'date' }
+      cluster_by: ['month_start_date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: month_start_date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 31
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - month_start_date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+
+  - name: date_browser_yearly
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['year_start_date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'year_start_date', 'data_type': 'date' }
+      cluster_by: ['year_start_date','brand_name'] 
+    columns:
+      - name: brand_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["B"]
+      - name: platform_name
+        tests:
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: sku
+        tests:
+          - not_null
+      - name: year_start_date
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 366
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - year_start_date
+            - brand_name
+            - platform_name
+            - store_name
+            - product_id
+            - sku
+
+  - name: date_browser_daily
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','brand_name','platform_name','store_name','product_id','sku']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','brand_name'] 
+
+  - name: sales_change_analysis
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['brand_name','platform_name','store_name','product_id','product_name','sku']
+

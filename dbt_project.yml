@@ -40,7 +40,7 @@ vars:
   default_storename: "US"
  
   # Set this flag to true if recharge is in the scope
-  recharge_flag: False
+  recharge_flag: True
  
   # Set this flag to true if upscribe is in the scope
   upscribe_flag: False
