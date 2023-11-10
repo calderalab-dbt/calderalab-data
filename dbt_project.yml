@@ -47,7 +47,26 @@ vars:
  
   # Set this flag to true if google analytics 4 is in the scope
   ga_flag: False
- 
+
+  # Enabling the models
+  RechargeOrderLineItemsProperties : true
+  RechargeSubscriptions : true
+  ShopifyCustomers : true
+  ShopifyOrders : true
+  ShopifyOrdersAddresses : true
+  ShopifyOrdersCustomer : true
+  ShopifyOrdersDiscountAllocations : true
+  ShopifyOrdersFulfillments : true
+  ShopifyOrdersLineItems : true
+  ShopifyOrdersLineItemsTaxLines : true
+  ShopifyOrdersShippingLines : true
+  ShopifyProducts : true
+  ShopifyRefundLineItemsTax : true
+  ShopifyRefundsLineItems : true
+  ShopifyRefundsRefundLineItems : true
+  ShopifyRefundsTransactions : true
+  ShopifyTransactions : true
+
   # Google Analytics 4 Account Platform Name Position
   platform_name_position: 2
  

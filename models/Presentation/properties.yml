@@ -645,9 +645,9 @@ models:
     config:
       materialized: incremental
       incremental_strategy: merge
-      unique_key: ['date','brand_name','platform_name','store_name']
+      unique_key: ['date','platform_name','store_name']
       partition_by: { 'field': 'date', 'data_type': 'date' }
-      cluster_by: ['date','brand_name'] 
+      cluster_by: ['date'] 
     columns:
       # - name: brand_name
       #   tests:

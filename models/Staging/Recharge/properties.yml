@@ -1,0 +1,94 @@
+version: 2
+models:
+  - name: RechargeAddress
+    description: This table provides address details for a customer based on a customer id, Each customer can have multiple addresses.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id','payment_method_id']
+
+  - name: RechargeCharges
+    description: A charge is the representation of a financial transaction linked to the purchase of an item. A Charge is linked to its corresponding orders.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id','line_items_sku','line_items_subscription_id']
+
+  - name: RechargeCollections
+    description: This table contains all the collections , contains an ordered list of Products and can be used for selective display of Products on chosen interfaces 
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id']
+
+  - name: RechargeCustomers
+    description: This table provides the account information. Email is unique on the Customer; no two customers for a store can have the same email
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id','email']
+
+  - name: RechargeDiscounts
+    description: This table contains a list of Discounts thats applied to a Checkout, or can be applied directly to an Address
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id']
+
+  - name: RechargeOnetimes
+    description: The table Returns a list of all Onetime products from store.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id','customer_id','address_id']
+
+
+  - name: RechargeOrdersLineItems
+    description: This Table provides details of all orders created after a Charge is successfully processed at line items granularity.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['order_id'] 
+        unique_key : ['order_id','sku']
+
+  - name: RechargeOrdersLineItemsProperties
+    description:  This Table provides details of all orders created after a Charge is successfully processed at line items granularity with properties.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['order_id'] 
+        unique_key : ['order_id','sku','name']
+
+  - name: RechargeProducts
+    description: This table lists all the product records in recharge.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['id'] 
+        unique_key : ['id']
+
+
+  - name: RechargeSubscriptions
+    description: This table provides details of subscription based on customer id.
+    config:
+        materialized : incremental
+        incremental_strategy : merge
+        partition_by : { 'field': 'created_at', 'data_type': 'timestamp' }
+        cluster_by : ['subscription_id'] 
+        unique_key : ['subscription_id','external_product_id','external_variant_id','sku']
+

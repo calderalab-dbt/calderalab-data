@@ -1,6 +1,5 @@
 select 
 distinct
--- b.brand_name,
 c.platform_name,
 e.order_channel,
 c.store_name,
