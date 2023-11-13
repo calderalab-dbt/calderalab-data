@@ -116,7 +116,8 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
         total_tax_set,
         total_tip_received,
         total_weight,
-        CAST(a.updated_at as timestamp) updated_at,
+        -- CAST(a.updated_at as timestamp) updated_at,
+        {{ timezone_conversion("a.updated_at") }} as updated_at,
         {% if target.type =='snowflake' %}
         BILLING_ADDRESS.VALUE:first_name::VARCHAR as billing_address_first_name,
         BILLING_ADDRESS.VALUE:address1::VARCHAR as billing_address_address1,

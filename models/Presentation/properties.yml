@@ -691,15 +691,15 @@ models:
     config:
       materialized: incremental
       incremental_strategy: merge
-      unique_key: ['created_at','brand_name','platform_name','store_name','sku','subscription_id']
+      unique_key: ['created_at','platform_name','store_name','sku','subscription_id']
       partition_by: { 'field': 'created_at', 'data_type': 'date' }
-      cluster_by: ['created_at','brand_name'] 
+      cluster_by: ['created_at'] 
     columns:
-      - name: brand_name
-        tests:
-          - not_null
-          - accepted_values:
-              values: ["B"]
+      # - name: brand_name
+      #   tests:
+      #     - not_null
+      #     - accepted_values:
+      #         values: ["B"]
       - name: platform_name
         tests:
           - not_null
@@ -731,7 +731,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - created_at
-            - brand_name
+            # - brand_name
             - platform_name
             - store_name
             - sku

@@ -50,11 +50,6 @@ with unnested_refunds as(
         {% set store = var('default_storename') %}
     {% endif %}
 
-    {% if var('timezone_conversion_flag') and i.lower() in tables_lowercase_list and i in var('raw_table_timezone_offset_hours')%}
-        {% set hr = var('raw_table_timezone_offset_hours')[i] %}
-    {% else %}
-        {% set hr = 0 %}
-    {% endif %}
 
     SELECT * 
     FROM (
@@ -79,10 +74,12 @@ with unnested_refunds as(
         CAST(a.id as string) refund_id,
 --        cast(a.id as string) order_id, 
         a.order_id,
-        cast(a.created_at as {{ dbt.type_timestamp() }}) created_at,
+        -- cast(a.created_at as {{ dbt.type_timestamp() }}) created_at,
+        {{ timezone_conversion("a.created_at") }} as created_at,
         a.note,
         user_id,
-        cast(a.processed_at as {{ dbt.type_timestamp() }}) processed_at,
+        -- cast(a.processed_at as {{ dbt.type_timestamp() }}) processed_at,
+        {{ timezone_conversion("a.processed_at") }} as processed_at,
         restock,
         a.admin_graphql_api_id,
         {% if target.type =='snowflake' %}

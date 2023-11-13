@@ -51,11 +51,6 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
         {% set store = var('default_storename') %}
     {% endif %}
 
-    {% if var('timezone_conversion_flag') and i.lower() in tables_lowercase_list and i in var('raw_table_timezone_offset_hours')%}
-        {% set hr = var('raw_table_timezone_offset_hours')[i] %}
-    {% else %}
-        {% set hr = 0 %}
-    {% endif %}
 
     SELECT * {{exclude()}} (row_num)
     FROM (
@@ -72,7 +67,8 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
         client_details,
         confirmed,
         contact_email,
-        cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
+        -- cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
+        {{ timezone_conversion("created_at") }} as created_at,
         currency,
         current_subtotal_price,
         current_subtotal_price_set,
@@ -131,7 +127,8 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
         total_tax_set,
         total_tip_received,
         total_weight,
-        CAST(a.updated_at as {{ dbt.type_timestamp() }}) as updated_at,
+        -- CAST(a.updated_at as {{ dbt.type_timestamp() }}) as updated_at,
+        {{ timezone_conversion("a.updated_at") }} as updated_at,
         billing_address,
         customer,
         discount_applications,

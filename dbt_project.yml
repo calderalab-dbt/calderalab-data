@@ -70,9 +70,9 @@ vars:
   # Google Analytics 4 Account Platform Name Position
   platform_name_position: 2
  
-  timezone_conversion_flag: False
+  timezone_conversion_flag: True
   #timezone_conversion_hours: "-7"
- 
+  to_timezone: 'US/Pacific'
   # Variables used for dbt-tests
   'dbt_date:time_zone': 'America/Los_Angeles'
   'brand_names_list': ['Default']
