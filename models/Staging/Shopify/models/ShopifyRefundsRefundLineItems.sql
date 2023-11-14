@@ -72,10 +72,10 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
         select
         CAST(a.id as string) refund_id,
         order_id,
-        cast(a.created_at as {{ dbt.type_timestamp() }}) created_at,
+        CAST({{ timezone_conversion("a.created_at") }} AS TIMESTAMP) as created_at,
         note,
         user_id,
-        CAST(a.processed_at as timestamp) processed_at,
+        CAST({{ timezone_conversion("a.processed_at") }} AS TIMESTAMP) as processed_at,
         restock,
         admin_graphql_api_id,
         {% if target.type =='snowflake' %}

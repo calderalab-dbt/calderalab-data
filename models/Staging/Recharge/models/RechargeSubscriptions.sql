@@ -57,7 +57,7 @@
             coalesce(CAST(id as string),'') as subscription_id,
             address_id,
             customer_id,
-            CAST({{ dbt.dateadd(datepart="hour", interval=hr, from_date_or_timestamp="a.created_at") }} as {{ dbt.type_timestamp() }}) as created_at,	
+           	CAST({{ timezone_conversion("a.created_at") }} AS TIMESTAMP) as created_at,
             utm_params.utm_source,
             utm_params.utm_medium,
             charge_interval_frequency,
@@ -78,10 +78,12 @@
             sku,
             sku_override,
             status,
-            CAST({{ dbt.dateadd(datepart="hour", interval=hr, from_date_or_timestamp="a.updated_at") }} as {{ dbt.type_timestamp() }}) as updated_at,
+           
+            CAST({{ timezone_conversion("a.updated_at") }} AS TIMESTAMP) as updated_at,
             variant_title,
             cancellation_reason,
-            CAST({{ dbt.dateadd(datepart="hour", interval=hr, from_date_or_timestamp="a.cancelled_at") }} as {{ dbt.type_timestamp() }}) as cancelled_at,	
+    
+            CAST({{ timezone_conversion("a.cancelled_at") }} AS TIMESTAMP) as cancelled_at,
             order_day_of_month,
             presentment_currency,
             cancellation_reason_comments,
