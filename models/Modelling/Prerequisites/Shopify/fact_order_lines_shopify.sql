@@ -51,9 +51,7 @@ on ord.order_id= disc_alloc.order_id and ord.line_items_sku = disc_alloc.line_it
   select distinct 'Recharge' as order_channel, 
   external_order_id as order_id, 
   sku, 
-  case when name ='subscription_id' then value
-  when name ='add_on_subscription_id' then value 
-  end as subscription_id
+  cast(purchase_item_id as string) as subscription_id
   from {{ ref('RechargeOrdersLineItemsProperties') }}) recharge
   on ord.order_id = recharge.order_id and ord.line_items_sku = recharge.sku
 {% endif %}
@@ -130,9 +128,7 @@ on cast(ref.order_id as string) = disc_alloc.order_id and cast(ref.line_item_sku
   select distinct 'Recharge' as order_channel, 
   external_order_id as order_id, 
   sku, 
-  case when name ='subscription_id' then value
-  when name ='add_on_subscription_id' then value 
-  end as subscription_id
+  cast(purchase_item_id as string) as subscription_id
   from {{ ref('RechargeOrdersLineItemsProperties') }}) recharge
   on ref.refund_id = recharge.order_id and ref.line_item_sku = recharge.sku
 {% endif %}

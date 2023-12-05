@@ -40,20 +40,39 @@ vars:
   default_storename: "US"
  
   # Set this flag to true if recharge is in the scope
-  recharge_flag: False
+  recharge_flag: True
  
   # Set this flag to true if upscribe is in the scope
   upscribe_flag: False
  
   # Set this flag to true if google analytics 4 is in the scope
   ga_flag: False
- 
+
+  # Enabling the models
+  RechargeOrderLineItemsProperties : true
+  RechargeSubscriptions : true
+  ShopifyCustomers : true
+  ShopifyOrders : true
+  ShopifyOrdersAddresses : true
+  ShopifyOrdersCustomer : true
+  ShopifyOrdersDiscountAllocations : true
+  ShopifyOrdersFulfillments : true
+  ShopifyOrdersLineItems : true
+  ShopifyOrdersLineItemsTaxLines : true
+  ShopifyOrdersShippingLines : true
+  ShopifyProducts : true
+  ShopifyRefundLineItemsTax : true
+  ShopifyRefundsLineItems : true
+  ShopifyRefundsRefundLineItems : true
+  ShopifyRefundsTransactions : true
+  ShopifyTransactions : true
+
   # Google Analytics 4 Account Platform Name Position
   platform_name_position: 2
  
-  timezone_conversion_flag: False
+  timezone_conversion_flag: True
   #timezone_conversion_hours: "-7"
- 
+  to_timezone: 'US/Pacific'
   # Variables used for dbt-tests
   'dbt_date:time_zone': 'America/Los_Angeles'
   'brand_names_list': ['Default']
