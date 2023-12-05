@@ -127,4 +127,4 @@ on a.platform_key = e.platform_key and a.brand_key = e.brand_key and a.date = e.
 left join {{ ref('dim_platform')}} h
 on f.platform_key = h.platform_key
 left join (select product_key, product_id, product_name, sku from {{ref('dim_product')}} ) i
-on f.product_key = i.product_key
+on f.product_key = i.product_key 
