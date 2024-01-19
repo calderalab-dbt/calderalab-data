@@ -57,7 +57,11 @@
             coalesce(CAST(id as string),'') as subscription_id,
             address_id,
             customer_id,
-           	CAST({{ timezone_conversion("a.created_at") }} AS TIMESTAMP) as created_at,
+
+
+            CAST(DATETIME(cast(a.created_at as timestamp), 'America/New_York') AS TIMESTAMP) as created_at,
+
+
             utm_params.utm_source,
             utm_params.utm_medium,
             charge_interval_frequency,
@@ -79,11 +83,11 @@
             sku_override,
             status,
            
-            CAST({{ timezone_conversion("a.updated_at") }} AS TIMESTAMP) as updated_at,
+            CAST(DATETIME(cast(a.updated_at as timestamp), 'America/New_York') AS TIMESTAMP) as updated_at,
             variant_title,
             cancellation_reason,
     
-            CAST({{ timezone_conversion("a.cancelled_at") }} AS TIMESTAMP) as cancelled_at,
+            CAST(DATETIME(cast(a.cancelled_at as timestamp), 'America/New_York') AS TIMESTAMP) as cancelled_at,
             order_day_of_month,
             presentment_currency,
             cancellation_reason_comments,
