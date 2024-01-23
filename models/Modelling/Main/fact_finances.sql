@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('fact_finances_shopify') }}
 -- Returns a list of relations that match schema_pattern.table_pattern%
 {% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'fact_finances_%') %}
 

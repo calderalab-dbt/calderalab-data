@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('dim_orders_shopify') }}
 {{ config(
   post_hook = "update {{ this }} ord
 set ship_address_key=keys.ship_address_key, bill_address_key=keys.bill_address_key
