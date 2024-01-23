@@ -1329,6 +1329,15 @@ models:
             - variant_id
             - variants_sku
 
+  - name: ShopifyRefundsOrderAdjustments
+    description: ShopifyRefundsOrderAdjustments.
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['refund_id','order_id','order_adjustments_id']
+      partition_by: { 'field': 'created_at', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['order_id']
+
   - name: ShopifyRefundLineItemsTax
     description: A list of taxes associated with the refunded item.
     config:
