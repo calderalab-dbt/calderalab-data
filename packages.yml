@@ -1,12 +1,6 @@
 packages:
-  - package: Saras-Daton/Shopify
-    version: 1.1.5
-
   - package: dbt-labs/dbt_utils
     version: 0.8.0
 
   - package: calogica/dbt_expectations
     version: [">=0.8.0", "<0.9.0"]
-  
-  - package: Saras-Daton/Recharge
-    version: 1.0.0
