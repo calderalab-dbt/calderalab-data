@@ -9,6 +9,8 @@ exchange_currency_rate,
 date(created_at) as date,
 'Order' as transaction_type, 
 false as is_cancelled,
+customer_id,
+tags,
 sum(order_quantity) quantity,
 sum(cast(order_price AS numeric) + ifnull(CAST(total_tax AS numeric),0)) total_price,
 sum(cast(order_price AS numeric)) subtotal_price,
@@ -21,8 +23,8 @@ sum(cast(null as numeric)) as shipping_discount
 -- from 
 -- ( select *
 from {{ ref('ShopifyOrders') }} ord
--- left join (select distinct customer_id, order_id from  {{ ref('ShopifyOrdersCustomer') }} where customer_id is not null) info
--- on ord.order_id = info.order_id
+left join (select distinct customer_id, order_id from  {{ ref('ShopifyOrdersCustomer') }} where customer_id is not null) info
+on ord.order_id = info.order_id
 left join 
 (select order_id,brand, store, sum(cast(line_items_quantity as numeric)) order_quantity, sum(CAST(line_items_price AS numeric)*line_items_quantity) order_price from {{ref('ShopifyOrdersLineItems')}} 
 {% if not flags.FULL_REFRESH %}
@@ -38,7 +40,7 @@ left join (select order_id,brand,sum(cast(shipping_lines_price as numeric)) orde
 {% endif %}
 group by 1,2) ord_shp_lns
 on ord.order_id=ord_shp_lns.order_id and ord.brand = ord_shp_lns.brand
-group by 1,2,3,4,5,6,7,8,9,10
+group by 1,2,3,4,5,6,7,8,9,10,11,12
 
 UNION ALL
 
@@ -53,6 +55,8 @@ rfnd_tran.exchange_currency_rate,
 date(rfnd_tran.refund_date) as date,
 'Return' as transaction_type, 
 false as is_cancelled,
+cast(null as string) as customer_id,
+cast(null as string) as tags,
 sum(cast(return_quantity as numeric)) quantity,
 sum(cast(transactions_amount as numeric)) total_price,
 sum(cast(refund_price as numeric)) as subtotal_price, 
@@ -86,4 +90,4 @@ group by 1) ord_rfnd_ln_itms
 on cast(rfnd_tran.refund_id as string)=ord_rfnd_ln_itms.refund_id
 where 
 refund_date is not null
-group by 1,2,3,4,5,6,7,8,9,10
+group by 1,2,3,4,5,6,7,8,9,10,11,12
