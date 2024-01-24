@@ -81,6 +81,7 @@ SELECT
   o.customer_id,
   CASE WHEN LOWER(tags) LIKE '%subscription%' THEN 'Subscription' ELSE 'One-time' END purchase_option,
   CASE WHEN o.order_id = c.first_order_id THEN 'First-time' ELSE 'Returning'  END customer_type,
+  ifnull(subtotal_price,0) - ifnull(order_discount,0) gsld
 FROM
   {{ref('fact_orders_shopify')}} o
 LEFT JOIN first_customer c
@@ -99,6 +100,12 @@ count(case when purchase_option = 'One-time' then order_id end) one_time_orders,
 count(case when purchase_option = 'Subscription' then order_id end) subscription_orders,
 count(case when (customer_type = 'First-time' and purchase_option = 'Subscription') or (purchase_option = 'One-time') then order_id end) acquisition_orders,
 count(case when customer_type = 'Returning' and purchase_option = 'Subscription' then order_id end) recurring_orders,
+sum(case when customer_type = 'First-time' then gsld end) new_customer_gsld,
+sum(case when customer_type = 'Returning' then gsld end) existing_customer_gsld,
+sum(case when purchase_option = 'One-time' then gsld end) one_time_gsld,
+sum(case when purchase_option = 'Subscription' then gsld end) subscription_gsld,
+sum(case when (customer_type = 'First-time' and purchase_option = 'Subscription') or (purchase_option = 'One-time') then gsld end) acquisition_gsld,
+sum(case when customer_type = 'Returning' and purchase_option = 'Subscription' then gsld end) recurring_gsld,
 count(case when customer_type = 'First-time' and purchase_option = 'Subscription' then order_id end) new_customer_sub_orders,
 count(case when customer_type = 'First-time' and purchase_option = 'One-time' then order_id end) new_customer_otp_orders,
 count(case when customer_type = 'Returning' and purchase_option = 'Subscription' then order_id end) existing_customer_sub_orders,
