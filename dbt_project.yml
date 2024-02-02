@@ -26,7 +26,7 @@ vars:
   # In case the monthly sales target sheet for COGs is in scope, the following flag needs to be turned on
   sales_target_gs_flag : False
  
-  currency_conversion_flag: False
+  currency_conversion_flag: True
   get_brandname_from_tablename_flag: False
   # if get_brandname_from_tablename_flag = True, position of brand name in the daton integration name
   brandname_position_in_tablename: 0
