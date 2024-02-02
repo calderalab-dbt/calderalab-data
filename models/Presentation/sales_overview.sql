@@ -8,9 +8,9 @@ with orders as (
     sum(quantity) quantity,
     sum(total_price) total_price,
     sum(subtotal_price) subtotal_price,
-    sum(shipping_price) shipping_price,
+    sum(shipping_price - ifnull(shipping_discount,0)) shipping_price,
     sum(giftwrap_price) giftwrap_price,
-    sum(order_discount) order_discount,
+    sum(order_discount - ifnull(shipping_discount,0)) order_discount,
     sum(shipping_discount) shipping_discount,
     sum(total_tax) total_taxes
     from {{ ref('fact_orders') }}
@@ -23,7 +23,7 @@ refunds_return_date as (
     brand_key,
     platform_key,
     date,
-    sum(total_price) refunded_amount_by_return_date,
+    sum(subtotal_price) refunded_amount_by_return_date,
     sum(quantity) refunded_quantity_by_return_date
     from {{ ref('fact_orders') }}
     where transaction_type = 'Return'

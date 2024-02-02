@@ -43,8 +43,8 @@ GROUP by 1
   SELECT
     date,
     SUM(IFNULL(subtotal_price,0)) gross_sales,
-    SUM(IFNULL(order_discount,0)) discounts,
-    SUM(IFNULL(shipping_price,0)) - SUM(IFNULL(shipping_discount,0)) shipping_price,
+    SUM(IFNULL(order_discount,0) - IFNULL(shipping_discount,0)) discounts,
+    SUM(IFNULL(shipping_price,0) - IFNULL(shipping_discount,0)) shipping_price,
     SUM(IFNULL(total_tax,0)) total_taxes,
   FROM
     {{ref('fact_orders')}}
@@ -57,7 +57,7 @@ GROUP by 1
   ref AS (
   SELECT
     date,
-    SUM(total_price) refunds
+    SUM(subtotal_price) refunds
   FROM
     {{ref('fact_orders')}}
   WHERE
