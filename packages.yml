@@ -4,3 +4,6 @@ packages:
 
   - package: calogica/dbt_expectations
     version: [">=0.8.0", "<0.9.0"]
+
+  - package: Saras-Daton/currency_exchange_rates
+    version: 1.0.2
