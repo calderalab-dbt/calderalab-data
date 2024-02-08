@@ -26,7 +26,7 @@
 
     select 
     distinct
-    {{ dbt_utils.surrogate_key(['subscription_id','sku']) }} AS subscription_key,
+    {{ dbt_utils.generate_surrogate_key(['subscription_id','sku']) }} AS subscription_key,
     order_channel,
     subscription_id,
     customer_id,

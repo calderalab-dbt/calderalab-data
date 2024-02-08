@@ -1,0 +1,676 @@
+version: 2
+models:
+  - name: ListOrder
+    description: A list orders along with the customer details
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['PurchaseDate','amazonorderid','marketplaceName','sellingPartnerId']
+      partition_by: { 'field': 'PurchaseDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['LastUpdateDate','PurchaseDate','amazonorderid']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - PurchaseDate
+            - amazonorderid
+            - marketplaceName
+    columns:
+      - name: PurchaseDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+      - name: amazonorderid
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+  - name: FBAManageInventoryHealthReport
+    description: A detailed report which gives details about inventory age , current inventory levels, recommended inventory levels
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['snapshot_date','asin','sku','marketplaceId','sellingPartnerId']
+      partition_by: { 'field': 'snapshot_date', 'data_type': 'date' }
+      cluster_by: ['snapshot_date','asin','sku']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - snapshot_date
+            - asin
+            - sku
+            - marketplaceId
+    columns:
+      - name: snapshot_date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+      - name: sku
+        tests:
+          - not_null:
+              severity: error
+
+  - name: FBAManageInventory
+    description: A list of ad groups associated with the accountA report which gives details about inventory movement - inbound, outbound, sellable
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ReportstartDate','sku','marketplaceId']
+      partition_by: { 'field': 'ReportstartDate','data_type':'timestamp','granularity': 'day' }
+      cluster_by: ['ReportstartDate','sku']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ReportstartDate
+            - sku
+            - marketplaceId
+    columns:
+      - name: ReportstartDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+      - name: sku
+        tests:
+          - not_null:
+              severity: error
+
+  - name: InventoryLedgerDetailedReport
+    description: A report about available quantity at the warehouse level
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['date','asin','fulfillment_center','msku', 'event_type', 'reference_id','quantity','disposition','marketplaceid','sellingPartnerId']
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['date','asin','msku']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - asin
+            - fulfillment_center
+            - msku
+            - event_type
+            - reference_id
+            - quantity
+            - disposition
+            - marketplaceid
+    columns:
+      - name: date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+      - name: msku
+        tests:
+          - not_null:
+              severity: error
+
+      - name: fulfillment_center
+        tests:
+          - not_null:
+              severity: error
+
+  - name: ListFinancialEventsOrderFees
+    description: A list of fees associated with the shipment item.
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ShipmentEventlist_PostedDate', 'ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId', 'ItemFeeList_FeeType','_seq_id']
+      partition_by: { 'field': 'ShipmentEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['ShipmentEventlist_PostedDate','ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ShipmentEventlist_PostedDate
+            - ShipmentEventlist_MarketplaceName
+            - ShipmentEventlist_AmazonOrderId
+            - ItemFeeList_FeeType
+            - _seq_id
+    columns:
+      - name: ShipmentEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+      
+  - name: ListFinancialEventsOrderPromotions
+    description: A list of promotions which gives the amount of promotional discount applied to the item at an item & order level.
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ShipmentEventlist_PostedDate', 'ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId', 'PromotionList_PromotionType','_seq_id']
+      partition_by: { 'field': 'ShipmentEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['ShipmentEventlist_PostedDate','ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ShipmentEventlist_PostedDate
+            - ShipmentEventlist_MarketplaceName
+            - ShipmentEventlist_AmazonOrderId
+            - PromotionList_PromotionType
+            - _seq_id
+    columns:
+      - name: ShipmentEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+     
+
+  - name: ListFinancialEventsOrderRevenue
+    description: A list of shipment items which includes order & product level revenue
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ShipmentEventlist_PostedDate', 'ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId', 'ItemChargeList_ChargeType','_seq_id']
+      partition_by: { 'field': 'ShipmentEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['ShipmentEventlist_PostedDate','ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ShipmentEventlist_PostedDate
+            - ShipmentEventlist_MarketplaceName
+            - ShipmentEventlist_AmazonOrderId
+            - ItemChargeList_ChargeType
+            - _seq_id
+    columns:
+      - name: ShipmentEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+      
+      
+
+  - name: ListFinancialEventsOrderTaxes
+    description: A list of order taxes
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['ShipmentEventlist_PostedDate', 'ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId', 'TaxesWithheld_ChargeType','_seq_id']
+      partition_by: { 'field': 'ShipmentEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['ShipmentEventlist_PostedDate','ShipmentEventlist_MarketplaceName', 'ShipmentEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ShipmentEventlist_PostedDate
+            - ShipmentEventlist_MarketplaceName
+            - ShipmentEventlist_AmazonOrderId
+            - TaxesWithheld_ChargeType
+            - _seq_id
+    columns:
+      - name: ShipmentEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: ListFinancialEventsRefundFees
+    description: A list of fees associated with the refunded item.
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['RefundEventlist_PostedDate', 'RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId', 'ItemFeeAdjustmentList_FeeType', '_seq_id']
+      partition_by: { 'field': 'RefundEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RefundEventlist_PostedDate','RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - RefundEventlist_PostedDate
+            - RefundEventlist_MarketplaceName
+            - RefundEventlist_AmazonOrderId
+            - ItemFeeAdjustmentList_FeeType
+            - _seq_id
+    columns:
+      - name: RefundEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: ListFinancialEventsRefundPromotions
+    description: A list of promotions which gives the amount of promotional discount applied to the item at an refunded item level.
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['RefundEventlist_PostedDate', 'RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId', 'PromotionList_PromotionType', '_seq_id']
+      partition_by: { 'field': 'RefundEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RefundEventlist_PostedDate','RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - RefundEventlist_PostedDate
+            - RefundEventlist_MarketplaceName
+            - RefundEventlist_AmazonOrderId
+            - PromotionList_PromotionType
+            - _seq_id
+    columns:
+      - name: RefundEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: ListFinancialEventsRefundRevenue
+    description: A list of refunded items which includes refund & product level revenue
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['RefundEventlist_PostedDate', 'RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId', 'ItemChargeAdjustmentList_ChargeType', '_seq_id']
+      partition_by: { 'field': 'RefundEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RefundEventlist_PostedDate','RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - RefundEventlist_PostedDate
+            - RefundEventlist_MarketplaceName
+            - RefundEventlist_AmazonOrderId
+            - ItemChargeAdjustmentList_ChargeType
+            - _seq_id
+      
+
+      
+    columns:
+      - name: RefundEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+      
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: ListFinancialEventsRefundTaxes
+    description: A list of refund taxes
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['RefundEventlist_PostedDate', 'RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId', 'TaxesWithheld_ChargeType', '_seq_id']
+      partition_by: { 'field': 'RefundEventlist_PostedDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RefundEventlist_PostedDate','RefundEventlist_MarketplaceName', 'RefundEventlist_AmazonOrderId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - RefundEventlist_PostedDate
+            - RefundEventlist_MarketplaceName
+            - RefundEventlist_AmazonOrderId
+            - TaxesWithheld_ChargeType
+            - _seq_id
+    columns:
+      - name: RefundEventlist_PostedDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: ListFinancialEventsServiceFees
+    description: A list of all the service level fees for Amazon Seller Central
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['RequestStartDate', 'marketplaceId', 'ServiceFeeEventList_FeeReason', 'FeeList_FeeType', 'ServiceFeeEventList_SellerSKU', 'ServiceFeeEventList_FeeDescription','_seq_id']
+      partition_by: { 'field': 'RequestStartDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RequestStartDate','marketplaceName', 'sellingPartnerId']
+    columns:
+      - name: posteddate
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: CatalogItems
+    description: A list of product summary, manufacturer & dimensions
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      cluster_by: ['RequestStartDate','summaries_brandName','ReferenceASIN']
+      partition_by: { 'field': 'RequestStartDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      unique_key: ['summaries_brandName','ReferenceASIN','summaries_modelNumber','marketplaceId','sellingPartnerId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - summaries_brandName
+            - ReferenceASIN
+            - summaries_modelNumber
+            - marketplaceId
+            - sellingPartnerId
+    columns:
+      - name: RequestStartDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+
+
+  - name: AllListingsReport
+    description: A listing report with details about all types of listings
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      cluster_by: ['ReportstartDate','seller_sku']
+      unique_key: ['seller_sku','listing_id']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - seller_sku
+            - listing_id
+    columns:
+      - name: seller_sku
+        tests:
+          - not_null:
+              config:
+                severity: error
+    
+
+  - name: FBAReturnsReport
+    description: Returns report of the orders fulfilled by Amazon
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['return_date','asin','sku','order_id','fnsku','license_plate_number','fulfillment_center_id','_seq_id','marketplaceId']
+      partition_by: { 'field': 'return_date', 'data_type': 'date' }
+      cluster_by: ['ReportstartDate','return_date','asin','sku']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - return_date
+            - asin
+            - sku
+            - order_id
+            - fnsku
+            - license_plate_number
+            - fulfillment_center_id
+            - _seq_id
+            - marketplaceId
+    columns:
+      - name: return_date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: FlatFileReturnsReportByReturnDate
+    description: Returns report of the orders fulfilled by Merchant
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['Return_request_date', 'Order_ID', 'ASIN','marketplaceId']
+      partition_by: { 'field': 'Return_request_date', 'data_type': 'date' }
+      cluster_by: ['ReportstartDate','Return_request_date','ASIN', 'Order_ID']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - Return_request_date
+            - Order_ID
+            - ASIN
+            - marketplaceId
+    columns:
+      - name: Return_request_date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: FBAAmazonFulfilledShipmentsReport
+    description: Orders report with shipment details included
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['purchase_date', 'sku', 'amazon_order_id','marketplaceName','_seq_id']
+      partition_by: { 'field': 'purchase_date', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['reporting_date','purchase_date','sku','amazon_order_id']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - purchase_date
+            - sku
+            - amazon_order_id
+            - marketplaceName
+            - _seq_id
+    columns:
+      - name: purchase_date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 3
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: FlatFileAllOrdersReportByLastUpdate
+    description: Order & Item Level report
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['purchase_date', 'amazon_order_id', 'asin', 'sku', '_seq_id']
+      merge_exclude_columns: ['quantity', 'currency','item_price','item_tax','shipping_price','shipping_tax','gift_wrap_price','gift_wrap_tax','item_promotion_discount','ship_promotion_discount']
+      partition_by: { 'field': 'purchase_date', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['last_updated_date','purchase_date','asin', 'amazon_order_id']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - purchase_date
+            - amazon_order_id
+            - asin
+            - sku
+            - _seq_id
+    columns:
+      - name: purchase_date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+  - name: SalesAndTrafficReportByChildASIN
+    description: Provides sales & traffic at SKU level that we see in the Business Report in the UI
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      partition_by: { 'field': 'date', 'data_type': 'date' }
+      cluster_by: ['ReportstartDate','date','parentAsin', 'childAsin']
+      unique_key: ['date', 'parentAsin', 'childAsin','marketplaceId','sellingPartnerId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - parentAsin
+            - childAsin
+            - sku
+            - marketplaceId
+    columns:
+      - name: date
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+
+
+  - name: ListingOffersForASIN
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      partition_by: { 'field': 'RequeststartDate', 'data_type': 'timestamp', 'granularity': 'day' }
+      cluster_by: ['RequeststartDate', 'ASIN', 'itemCondition']
+      unique_key: ['ASIN', 'itemCondition','sellingPartnerId']
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ASIN
+            - itemCondition
+    columns:
+      - name: RequeststartDate
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - not_null:
+              config:
+                severity: error
+
+      - name: brand
+        tests:
+          - accepted_values:
+              values: ['Default']
+  - name: FlatFileFeedbackReports
+    description: Product ratings 
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: ['Order_ID', 'Date']
+      partition_by: { 'field': 'Date', 'data_type': 'date', 'granularity': 'day' }
+      cluster_by: ['Order_ID']
+  - name: SuppressedListingsReport
+    description: suppressed/canceled listings
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      unique_key: [ASIN,SKU,Status,Status_Change_Date]
+      cluster_by: ['ASIN',SKU]  

@@ -1,12 +1,12 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: "edm_data_transformation"
+name: "edm"
 version: "1.0.0"
 config-version: 2
  
 # This setting configures which "profile" dbt uses for this project.
-profile: "edm_data_transformation"
+profile: "edm"
  
 vars:
   # raw_database: "EDM"
@@ -17,6 +17,7 @@ vars:
   mdl_schema: "dev_edm_prep"
  
   prerequisite_mdl_schema: "dev_edm_prep"
+  surrogate_key_treat_nulls_as_empty_strings: True
  
   # Set the models to False in case you dont want them to be materialised
  
@@ -66,6 +67,11 @@ vars:
   ShopifyRefundsRefundLineItems : true
   ShopifyRefundsTransactions : true
   ShopifyTransactions : true
+  AMAZONSELLER: True
+  AMAZONVENDOR: False
+  AMAZONSBADS: True
+  AMAZONSDADS: True
+  AMAZONSPADS: True
 
   # Google Analytics 4 Account Platform Name Position
   platform_name_position: 2

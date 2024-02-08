@@ -4,7 +4,7 @@
 
 {% for i in relations %}
         select 
-        {{ dbt_utils.surrogate_key(['order_id','platform_name']) }} AS order_key,
+        {{ dbt_utils.generate_surrogate_key(['order_id','platform_name']) }} AS order_key,
         platform_name as order_platform,
         transaction_id,
         transaction_stage,

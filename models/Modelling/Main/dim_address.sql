@@ -7,7 +7,7 @@ select *, row_number() over(partition by address_key order by effective_start_da
 from (
 {% for i in relations %}
     select  
-    {{ dbt_utils.surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }} AS address_key,
+    {{ dbt_utils.generate_surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }} AS address_key,
     address_type,
     addr_line_1,
     addr_line_2,

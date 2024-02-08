@@ -6,7 +6,7 @@ select * {{exclude()}} (row_num, _daton_batch_runtime) from (
 select *, row_number() over(partition by product_id,sku,platform_name, start_date, end_date order by _daton_batch_runtime desc) row_num from (
 {% for i in relations %}
         select 
-        {{ dbt_utils.surrogate_key(['product_id','sku','platform_name']) }} AS product_key,
+        {{ dbt_utils.generate_surrogate_key(['product_id','sku','platform_name']) }} AS product_key,
         platform_name,
         product_name,
         product_id,
