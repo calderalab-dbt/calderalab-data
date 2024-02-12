@@ -9,7 +9,7 @@
 
 {% for i in relations %}
     select
-    {{ dbt_utils.surrogate_key(['campaign_id','campaign_type'])}} AS campaign_key,
+    campaign_id as campaign_key,
     {{ dbt_utils.surrogate_key(['adgroup_id','campaign_type'])}} AS adgroup_key,
     {{ dbt_utils.surrogate_key(['ad_id', 'ad_type']) }} AS ad_key,
     {{ dbt_utils.surrogate_key(['flow_id','ad_channel']) }} AS flow_key,
