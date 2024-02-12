@@ -1,7 +1,7 @@
 select 
 brand,
 {{store_name('store')}},
-cast(campaign_id as string) campaign_id,
+cast(campaign_name as string) campaign_id,
 cast(null as string) as flow_id,
 cast(null as string) as adgroup_id, 
 cast(null as string) as ad_id,
