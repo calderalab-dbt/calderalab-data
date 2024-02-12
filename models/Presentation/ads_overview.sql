@@ -25,5 +25,3 @@ FROM
   {{ref('fact_advertising')}}
 group by 1
 order by 1 desc
-LIMIT
-  1000
