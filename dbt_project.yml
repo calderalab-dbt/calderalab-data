@@ -66,6 +66,11 @@ vars:
   ShopifyRefundsRefundLineItems : true
   ShopifyRefundsTransactions : true
   ShopifyTransactions : true
+  FacebookAdinsights  : true
+  FacebookAds : true
+  FacebookCampaigns : true
+  FacebookAdinsightsAction: true
+  FacebookAdinsightsActionValues: true
 
   # Google Analytics 4 Account Platform Name Position
   platform_name_position: 2
@@ -93,6 +98,7 @@ target-path: "target" # directory which will store compiled SQL files
 clean-targets: # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
+  
  
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models

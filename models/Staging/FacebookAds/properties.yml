@@ -1,0 +1,138 @@
+
+version: 2
+
+models:
+    - name: FacebookAds
+      description: A report with Ad Insights
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'created_time', 'data_type': 'timestamp', 'granularity': 'day' }
+        cluster_by: ['ad_id']
+        unique_key: ['ad_id']
+
+    - name: FacebookAdinsights
+      description: A report with Ad Insights
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['date_start']
+        unique_key: ['date_start', 'ad_id']
+
+    - name: FacebookAdinsightsActionValues
+      description: A report with Ad Insights on basis of action values
+      config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['date_start']
+        unique_key: ['date_start', 'ad_id', 'action_values_action_type']
+
+    - name: FacebookAdinsightsConversions
+      description: A report with Ad Insights on basis of conversions
+      config:
+        materialized: incremental
+        incremental_strategy: merge
+        unique_key: ['date_start', 'ad_id', 'conversions_action_type']
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['date_start']
+
+    - name: FacebookAdinsightsConversionValues
+      description: A report with Ad Insights on basis of conversion values
+      config:
+        materialized: incremental
+        incremental_strategy: merge
+        unique_key: ['date_start', 'ad_id', 'conversion_values_action_type']
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['date_start']
+
+    - name: FacebookAdCreatives
+      description: Format which provides layout and contains content for the ad.
+      config:
+        materialized: incremental
+        incremental_strategy: merge
+        unique_key: ['effective_object_story_id','name']
+        cluster_by: ['effective_object_story_id']
+
+    - name: FacebookAdsByCountry
+      description: A report with Ad Insights on basis of Country.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','country']
+        unique_key: ['ad_id','date_start','country']
+
+    - name: FacebookAdsByDevicePlatform
+      description: A report with Ad Insights on basis of Device Platform.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','device_platform']
+        unique_key: ['ad_id','date_start','device_platform']
+
+    - name: FacebookAdsByGender
+      description: A report with Ad Insights on basis of Gender.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','gender']
+        unique_key: ['ad_id','date_start','gender']
+
+    - name: FacebookAdsByGenderAge
+      description: A report with Ad Insights on basis of Gender and Age.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','gender','age']
+        unique_key: ['ad_id','date_start','gender','age']
+
+    - name: FacebookAdsByProductId
+      description: A report with Ad Insights on basis of Product ID.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','product_id']
+        unique_key: ['ad_id','date_start','product_id']
+
+    - name: FacebookAdsByPublisherPlatform
+      description: A report with Ad Insights on basis of Publisher Platform.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','publisher_platform']
+        unique_key: ['ad_id','date_start','publisher_platform']
+
+    - name: FacebookAdsByPlatformPosition
+      description: A report with Ad Insights on basis of Publisher Platform and Platform Position.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','publisher_platform','platform_position']
+        unique_key: ['ad_id','date_start','publisher_platform','platform_position']
+
+    - name: FacebookAdsByRegion
+      description: A report with Ad Insights on basis of Region.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'date_start', 'data_type': 'date' }
+        cluster_by: ['ad_id','region']
+        unique_key: ['ad_id','date_start','region','_seq_id']
+
+    - name: FacebookCampaigns
+      description: A report with Campaign Details.
+      config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: { 'field': 'start_time', 'data_type': 'timestamp', 'granularity': 'day' }
+        cluster_by: ['campaign_id']
+        unique_key: ['campaign_id']
+
