@@ -30,7 +30,7 @@ child as (
     date(date_start) as date,
     sum(cast(action_values_value as numeric)) as sales
     from {{ref('FacebookAdinsightsActionValues')}}
-    where action_values_action_type = 'offsite_conversion.fb_pixel_purchase'
+    where action_values_action_type = 'onsite_web_purchase'
     group by 1,2,3,4,5,6,7,8
     ),
 
@@ -46,7 +46,7 @@ child2 as (
     date(date_start) as date,
     sum(cast(action_value as numeric)) as conversions,
     from {{ref('FacebookAdinsightsAction')}}
-    where action_action_type = 'offsite_conversion.fb_pixel_purchase'
+    where action_action_type = 'onsite_web_purchase'
     group by 1,2,3,4,5,6,7,8
     )    
 
