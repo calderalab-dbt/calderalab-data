@@ -10,7 +10,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sp_productads_tbl_ptrn','%sponsoredproducts%productadsreport'),
+table_pattern=var('sp_productads_tbl_ptrn','%SponsoredProducts_ProductAdsReport'),
 exclude=var('sp_productads_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 
@@ -30,7 +30,7 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    RequestTime,
+    --RequestTime,
     profileId,
     countryName,
     accountName,

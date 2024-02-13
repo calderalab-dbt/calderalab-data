@@ -10,7 +10,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sp_placementcampaigns_tbl_ptrn','%sponsoredproducts%placementcampaignsreport'),
+table_pattern=var('sp_placementcampaigns_tbl_ptrn','%SponsoredProducts_PlacementCampaignsReport'),
 exclude=var('sp_placementcampaigns_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 

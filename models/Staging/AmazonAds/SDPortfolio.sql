@@ -6,7 +6,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sd_portfolio_tbl_ptrn','%sd%portfolio'),
+table_pattern=var('sd_portfolio_tbl_ptrn','%Display%Portfolio'),
 exclude=var('sd_portfolio_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 
@@ -26,7 +26,7 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    RequestTime,
+   -- RequestTime,
     profileId,
     countryName,
     accountName,

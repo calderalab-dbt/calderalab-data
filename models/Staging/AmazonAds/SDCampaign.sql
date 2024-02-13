@@ -6,7 +6,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sd_campaign_tbl_ptrn','%sponsoreddisplay%campaign'),
+table_pattern=var('sd_campaign_tbl_ptrn','%Amazon%SponsoredDisplay_Campaign'),
 exclude=var('sd_campaign_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 
@@ -26,7 +26,7 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    RequestTime,
+    --RequestTime,
     profileId,
     countryName,
     accountName,
@@ -41,8 +41,8 @@ database=var('raw_database')) %}
     startDate,
     endDate,
     state,
-    costType,
-    deliveryProfile,
+    --costType,
+    --deliveryProfile,
     {{daton_user_id()}} as _daton_user_id,
     {{daton_batch_runtime()}} as _daton_batch_runtime,
     {{daton_batch_id()}} as _daton_batch_id,            

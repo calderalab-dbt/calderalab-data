@@ -7,7 +7,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('ListOrder_tbl_ptrn','%listorder'),
+table_pattern=var('ListOrder_tbl_ptrn','%selling%ListOrder'),
 exclude=var('ListOrder_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 

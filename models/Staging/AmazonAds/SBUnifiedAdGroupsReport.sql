@@ -7,7 +7,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sb_unifiedadgroups_tbl_ptrn','%sponsoredbrands%unifiedadgroupsreport'),
+table_pattern=var('sb_unifiedadgroups_tbl_ptrn','%SponsoredBrands%AdGroupsReport'),
 exclude=var('sb_unifiedadgroups_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 

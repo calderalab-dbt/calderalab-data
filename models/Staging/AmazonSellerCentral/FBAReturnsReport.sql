@@ -7,7 +7,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('FBAReturnsReport_tbl_ptrn','%fbareturnsreport'),
+table_pattern=var('FBAReturnsReport_tbl_ptrn','%selling%FBAReturnsReport'),
 exclude=var('FBAReturnsReport_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 

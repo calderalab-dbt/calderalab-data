@@ -11,7 +11,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('FlatFileReturnsReportByReturnDate_tbl_ptrn','%flatfilereturnsreportbyreturndate'),
+table_pattern=var('FlatFileReturnsReportByReturnDate_tbl_ptrn','%selling%FlatFileReturnsReportbyReturnDate'),
 exclude=var('FlatFileReturnsReportByReturnDate_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 

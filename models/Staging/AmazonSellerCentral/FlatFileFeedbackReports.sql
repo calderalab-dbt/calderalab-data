@@ -11,7 +11,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('FlatFileFeedbackReports_tbl_ptrn','%flatfilefeedbackreport%'),
+table_pattern=var('FlatFileFeedbackReports_tbl_ptrn','%selling%FlatFileFeedbackReport'),
 exclude=var('FlatFileFeedbackReports_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 
