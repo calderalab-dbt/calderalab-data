@@ -49,8 +49,8 @@ database=var('raw_database')) %}
             '{{env_var("DBT_CLOUD_RUN_ID", "manual")}}' as _run_id
             from (
             select
-            {{ timezone_conversion("RequestStartDate") }} as RequestStartDate,
-            {{ timezone_conversion("RequestEndDate") }} as RequestEndDate,
+            DATE_ADD({{ timezone_conversion("RequeststartDate") }}, INTERVAL 8 HOUR)  as RequeststartDate,
+            DATE_ADD({{ timezone_conversion("RequestendDate") }}, INTERVAL 8 HOUR)  as RequestendDate,
             sellingPartnerId,
             marketplaceName,
             marketplaceId,

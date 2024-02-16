@@ -1,6 +1,7 @@
--- depends_on: {{ ref('fact_order_lines_shopify') }}
+
+-- depends_on: {{ ref('fact_order_lines_amazonseller') }}
 -- Returns a list of relations that match schema_pattern.table_pattern%
-{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'fact_order_lines_%') %}
+{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'fact_order_lines_amazonseller%') %}
 
 {% for i in relations %}
     select 

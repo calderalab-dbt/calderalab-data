@@ -52,7 +52,7 @@ from (
         {% if target.type=='snowflake' %} 
             {{ timezone_conversion("RefundEventlist.value:PostedDate") }} as RefundEventlist_PostedDate,
         {% else %}
-            {{ timezone_conversion("RefundEventlist.PostedDate") }} as RefundEventlist_PostedDate,
+            DATE_ADD({{ timezone_conversion("RefundEventlist.PostedDate") }}, INTERVAL 8 HOUR) as RefundEventlist_PostedDate,
         {% endif %}
         coalesce({{extract_nested_value("RefundEventlist","AmazonOrderId","string")}},'N/A') as RefundEventlist_AmazonOrderId,
         coalesce({{extract_nested_value("RefundEventlist","MarketplaceName","string")}},'N/A') as RefundEventlist_MarketplaceName,

@@ -27,8 +27,8 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    {{ timezone_conversion("RequeststartDate") }} as RequeststartDate,
-    {{ timezone_conversion("RequestendDate") }} as RequestendDate,
+    DATE_ADD({{ timezone_conversion("RequeststartDate") }}, INTERVAL 8 HOUR)  as RequeststartDate,
+    DATE_ADD({{ timezone_conversion("RequestendDate") }}, INTERVAL 8 HOUR)  as RequestendDate,
     coalesce(ReferenceASIN,'N/A') as ReferenceASIN,
     sellingPartnerId,
     marketplaceName,

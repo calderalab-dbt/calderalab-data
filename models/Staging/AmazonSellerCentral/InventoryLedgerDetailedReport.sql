@@ -33,9 +33,9 @@ database=var('raw_database')) %}
         select 
         '{{brand|replace("`","")}}' as brand,
         '{{store|replace("`","")}}' as store,
-        {{ timezone_conversion("reportstartdate") }} as reportstartdate,
-        {{ timezone_conversion("reportenddate") }} as reportenddate,
-        {{ timezone_conversion("reportrequesttime") }} as reportrequesttime,
+    DATE_ADD({{ timezone_conversion("ReportstartDate") }}, INTERVAL 8 HOUR) as ReportstartDate,
+    DATE_ADD({{ timezone_conversion("ReportendDate") }}, INTERVAL 8 HOUR) as ReportendDate,
+    DATE_ADD({{ timezone_conversion("ReportRequestTime") }}, INTERVAL 8 HOUR) as ReportRequestTime,
         sellingpartnerid,
         marketplacename,
         marketplaceid,

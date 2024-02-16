@@ -52,7 +52,7 @@ from (
             {% if target.type=='snowflake' %} 
                 {{ timezone_conversion("ShipmentEventlist.value:PostedDate") }} as ShipmentEventlist_PostedDate,
             {% else %}
-                {{ timezone_conversion("ShipmentEventlist.PostedDate") }} as ShipmentEventlist_PostedDate,
+                DATE_ADD({{ timezone_conversion("ShipmentEventlist.PostedDate") }}, INTERVAL 8 HOUR) as ShipmentEventlist_PostedDate,
             {% endif %}
             coalesce({{extract_nested_value("ShipmentEventlist","AmazonOrderId","string")}},'N/A') as ShipmentEventlist_AmazonOrderId,
             coalesce({{extract_nested_value("ShipmentEventlist","MarketplaceName","string")}},'N/A') as ShipmentEventlist_MarketplaceName,

@@ -14,7 +14,7 @@ vars:
   raw_database: "caldera-labs"
   raw_schema: "Caldera_Labs"
   mdl_database: "caldera-labs"
-  mdl_schema: "dev_edm_prep"
+  mdl_schema: "dev_edm_main"
  
   prerequisite_mdl_schema: "dev_edm_prep"
   surrogate_key_treat_nulls_as_empty_strings: True

@@ -6,7 +6,7 @@
 
 {% set relations = dbt_utils.get_relations_by_pattern(
 schema_pattern=var('raw_schema'),
-table_pattern=var('sb_unifiedsearchtermkeywords_tbl_ptrn','%sponsoredbrands%unifiedsearchtermkeywordsreport'),
+table_pattern=var('sb_unifiedsearchtermkeywords_tbl_ptrn','%SponsoredBrands_SearchTermKeywordsReport'),
 exclude=var('sb_unifiedsearchtermkeywords_tbl_exclude_ptrn',''),
 database=var('raw_database')) %}
 
@@ -26,7 +26,7 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    RequestTime,
+    --RequestTime,
     profileId,
     countryName,
     accountName,
@@ -34,7 +34,7 @@ database=var('raw_database')) %}
     reportDate,
     coalesce(campaignId,'N/A') as campaignId, 
     campaignStatus,
-    campaignBudget,
+    --campaignBudget,
     campaignBudgetType,
     campaignName,
     impressions,
@@ -50,16 +50,6 @@ database=var('raw_database')) %}
     coalesce(query,'N/A') as query,
     coalesce(keywordId,'N/A') as keywordId,
     coalesce(matchType,'N/A') as matchType,
-    vctr,
-    video5SecondViewRate,
-    video5SecondViews,
-    videoFirstQuartileViews,
-    videoMidpointViews,
-    videoThirdQuartileViews,
-    videoUnmutes,
-    viewableImpressions,
-    vtr,
-    videoCompleteViews,
     {{daton_user_id()}} as _daton_user_id,
     {{daton_batch_runtime()}} as _daton_batch_runtime,
     {{daton_batch_id()}} as _daton_batch_id,            

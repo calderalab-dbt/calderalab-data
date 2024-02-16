@@ -27,8 +27,8 @@ database=var('raw_database')) %}
         select 
         '{{brand|replace("`","")}}' as brand,
         '{{store|replace("`","")}}' as store,
-        {{ timezone_conversion("RequestStartDate") }} as RequestStartDate,
-        {{ timezone_conversion("RequestEndDate") }} as RequestEndDate,
+        DATE_ADD({{ timezone_conversion("RequeststartDate") }}, INTERVAL 8 HOUR)  as RequeststartDate,
+        DATE_ADD({{ timezone_conversion("RequestendDate") }}, INTERVAL 8 HOUR)  as RequestendDate,
         ReferenceSKU,
         coalesce(ASIN,'N/A') as ASIN,
         coalesce(SKU,'N/A') as SKU,
@@ -50,7 +50,7 @@ database=var('raw_database')) %}
         {% if target.type=='snowflake' %} 
             {{ timezone_conversion("Summary.value:OffersAvailableTime") }} as Summary_OffersAvailableTime,
         {% else %}
-            {{ timezone_conversion("Summary.OffersAvailableTime") }} as Summary_OffersAvailableTime,
+            DATE_ADD({{ timezone_conversion("Summary.OffersAvailableTime") }}, INTERVAL 8 HOUR) as Summary_OffersAvailableTime,
         {% endif %}
         {{daton_user_id()}} as _daton_user_id,
         {{daton_batch_runtime()}} as _daton_batch_runtime,

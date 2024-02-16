@@ -27,7 +27,7 @@ select * {{exclude()}} (row_num) from
     left join (select distinct campaign.portfolioId, portfolio.name, campaign.campaignId
     from {{ ref('SPCampaign') }} campaign
     left join {{ ref('SPPortfolio') }} portfolio
-    on campaign.portfolioId = portfolio.portfolioId
+    on cast(campaign.portfolioId as string) = portfolio.portfolioId
     ) portfolio_map on prodads.campaignId = portfolio_map.campaignId
     {% if not flags.FULL_REFRESH %}
         {# /* -- this filter will only be applied on an incremental run */ #}

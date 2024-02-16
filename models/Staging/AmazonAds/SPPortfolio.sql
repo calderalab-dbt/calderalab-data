@@ -26,7 +26,7 @@ database=var('raw_database')) %}
     select 
     '{{brand|replace("`","")}}' as brand,
     '{{store|replace("`","")}}' as store,
-    RequestTime,
+    --RequestTime,
     profileId,
     countryName,
     accountName,
