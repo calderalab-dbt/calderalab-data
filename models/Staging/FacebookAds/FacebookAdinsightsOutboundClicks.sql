@@ -23,7 +23,7 @@ SELECT coalesce(MAX(_daton_batch_runtime) - 2592000000,0) FROM {{ this }}
 {% endif %}
 
 {% set table_name_query %}
-{{set_table_name('%caldera_fb_ads_v2_ad_insights%')}}    
+{{set_table_name('%caldera_fb_ads_v2%%_adinsights%')}}    
 {% endset %}  
 
 
