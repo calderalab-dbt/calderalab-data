@@ -4,7 +4,7 @@
 
 {% for i in relations %}
     select 
-    {{ dbt_utils.surrogate_key(['platform_name','store_name']) }} AS platform_key, 
+    {{ dbt_utils.generate_surrogate_key(['platform_name','store_name']) }} AS platform_key, 
     platform_name,
     type,
     store_name,

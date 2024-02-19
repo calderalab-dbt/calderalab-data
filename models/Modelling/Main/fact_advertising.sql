@@ -10,12 +10,12 @@
 {% for i in relations %}
     select
     campaign_id as campaign_key,
-    {{ dbt_utils.surrogate_key(['adgroup_id','campaign_type'])}} AS adgroup_key,
-    {{ dbt_utils.surrogate_key(['ad_id', 'ad_type']) }} AS ad_key,
-    {{ dbt_utils.surrogate_key(['flow_id','ad_channel']) }} AS flow_key,
-    {{ dbt_utils.surrogate_key(['brand'])}} AS brand_key,
-    {{ dbt_utils.surrogate_key(['platform_name','store_name'])}} AS platform_key,
-    {{ dbt_utils.surrogate_key(['product_id','sku','platform_name','variant_id'])}} AS product_key,
+    {{ dbt_utils.generate_surrogate_key(['adgroup_id','campaign_type'])}} AS adgroup_key,
+    {{ dbt_utils.generate_surrogate_key(['ad_id', 'ad_type']) }} AS ad_key,
+    {{ dbt_utils.generate_surrogate_key(['flow_id','ad_channel']) }} AS flow_key,
+    {{ dbt_utils.generate_surrogate_key(['brand'])}} AS brand_key,
+    {{ dbt_utils.generate_surrogate_key(['platform_name','store_name'])}} AS platform_key,
+    {{ dbt_utils.generate_surrogate_key(['product_id','sku','platform_name','variant_id'])}} AS product_key,
     date,
     ad_channel,
     clicks,

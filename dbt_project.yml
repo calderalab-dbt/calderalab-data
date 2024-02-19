@@ -48,6 +48,8 @@ vars:
   # Set this flag to true if google analytics 4 is in the scope
   ga_flag: False
 
+  surrogate_key_treat_nulls_as_empty_strings : true
+
   # Enabling the models
   RechargeOrderLineItemsProperties : true
   RechargeSubscriptions : true
