@@ -139,7 +139,7 @@ models:
       materialized: incremental
       incremental_strategy: merge
       unique_key: ['order_key']
-      merge_exclude_columns: ['ship_address_key','bill_address_key']
+      # merge_exclude_columns: ['ship_address_key','bill_address_key']
 
     columns:
       - name: order_key

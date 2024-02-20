@@ -14,9 +14,11 @@ vars:
   raw_database: "caldera-labs"
   raw_schema: "Caldera_Labs"
   mdl_database: "caldera-labs"
-  mdl_schema: "dev_edm_main"
+  # mdl_schema: "dev_edm_main" 
+  mdl_schema: "dev_edm" 
  
-  prerequisite_mdl_schema: "dev_edm_prep"
+  #prerequisite_mdl_schema: "dev_edm_prep"
+  prerequisite_mdl_schema: "dev_edm"
   surrogate_key_treat_nulls_as_empty_strings: True
  
   # Set the models to False in case you dont want them to be materialised
@@ -120,7 +122,7 @@ models:
   edm_data_transformation:
     # Config indicated by + and applies to all files under models/example/
     Staging:
-      
+       +schema: staging
     Modelling:
       Prerequisites:
         +schema: prep

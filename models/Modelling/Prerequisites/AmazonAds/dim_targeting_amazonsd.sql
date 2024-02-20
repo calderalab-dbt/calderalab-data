@@ -1,4 +1,4 @@
-{% if var('AMAZONSDADS') %}
+{% if var('AMAZONSDADS') and var('dim_targeting_amazonsd',False) %}
     {{ config( enabled = True ) }}
 {% else %}
     {{ config( enabled = False ) }}

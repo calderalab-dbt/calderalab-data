@@ -1,4 +1,4 @@
-{% if var('AMAZONSDADS') and var('SDProductMetadata',True) %}
+{% if var('AMAZONSDADS') and var('SDProductMetadata',False) %}
     {{ config( enabled = True ) }}
 {% else %}
     {{ config( enabled = False ) }}

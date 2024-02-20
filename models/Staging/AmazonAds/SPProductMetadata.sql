@@ -1,4 +1,4 @@
-{% if var('AMAZONSPADS') and var('SPProductMetadata',True) %}
+{% if var('AMAZONSPADS') and var('SPProductMetadata',False) %}
     {{ config( enabled = True ) }}
 {% else %}
     {{ config( enabled = False ) }}

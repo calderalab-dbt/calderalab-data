@@ -1,4 +1,4 @@
-{% if var('AMAZONSDADS') and var('SDProductTargetingReport',True) %}
+{% if var('AMAZONSDADS') and var('SDProductTargetingReport',False) %}
     {{ config( enabled = True ) }}
 {% else %}
     {{ config( enabled = False ) }}

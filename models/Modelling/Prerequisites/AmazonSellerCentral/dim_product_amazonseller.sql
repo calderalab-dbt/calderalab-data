@@ -122,7 +122,8 @@ left join (
   cogs,
   currency_code, 
   start_date, 
-  end_date 
+  end_date,
+  _daton_batch_runtime 
   from {{ ref('ProductDetailsInsights') }} 
   where lower(platform_name) = 'amazon') prod_gs
 on products.sku = prod_gs.sku

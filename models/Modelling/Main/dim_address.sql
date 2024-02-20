@@ -16,6 +16,8 @@ from (
     state,
     country,
     postal_code,
+    order_id,
+    'Shopify' as platform_name,
     last_updated_date as effective_start_date,
     cast(null as date) as effective_end_date,
     current_timestamp() as _last_updated,
