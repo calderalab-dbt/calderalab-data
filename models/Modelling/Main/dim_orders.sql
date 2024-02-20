@@ -11,7 +11,7 @@ from {{ref('order_address_keys')}}  keys
 
 {% for i in relations %}
         select
-        {{ dbt_utils.generate_surrogate_key(['order_id','platform_name']) }} AS order_key,
+        {{ dbt_utils.surrogate_key(['order_id','platform_name']) }} AS order_key,
         cast(null as string) as ship_address_key,
         cast(null as string) as bill_address_key,
         platform_name,

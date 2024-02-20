@@ -13,9 +13,9 @@
 
 {% for i in results_list %}
     select
-    {{ dbt_utils.generate_surrogate_key(['order_id','platform_name']) }} AS order_key, 
-    case when max(address_type)='shipping' then max({{ dbt_utils.generate_surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }}) else cast(null as string) end as ship_address_key,
-    case when min(address_type)='billing' then max({{ dbt_utils.generate_surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }}) else cast(null as string) end as bill_address_key
+    {{ dbt_utils.surrogate_key(['order_id','platform_name']) }} AS order_key, 
+    case when max(address_type)='shipping' then max({{ dbt_utils.surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }}) else cast(null as string) end as ship_address_key,
+    case when min(address_type)='billing' then max({{ dbt_utils.surrogate_key(['address_type','addr_line_1','addr_line_2','city','district','state','country','postal_code']) }}) else cast(null as string) end as bill_address_key
     from {{i}}
     where address_type in ('shipping','billing')
     group by 1
