@@ -4,7 +4,7 @@
 
 select * {{exclude()}} (row_num, order_date) from (
 select
-{{ dbt_utils.surrogate_key(['customer_id']) }} AS customer_key,
+{{ dbt_utils.generate_surrogate_key(['customer_id']) }} AS customer_key,
 customer_id,
 email,
 order_date,

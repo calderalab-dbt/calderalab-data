@@ -1,14 +1,15 @@
--- depends_on: {{ ref('fact_order_lines_shopify') }}
+
+-- depends_on: {{ ref('fact_order_lines_amazonseller') }}
 -- Returns a list of relations that match schema_pattern.table_pattern%
-{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'fact_order_lines_%') %}
+{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'fact_order_lines_amazonseller%') %}
 
 {% for i in relations %}
     select 
-    {{ dbt_utils.surrogate_key(['order_id','platform_name']) }} AS order_key,
-    {{ dbt_utils.surrogate_key(['platform_name','store_name']) }} AS platform_key,
-    {{ dbt_utils.surrogate_key(['brand']) }} AS brand_key,
-    {{ dbt_utils.surrogate_key(['product_id', 'sku','platform_name']) }} AS product_key,
-    {{ dbt_utils.surrogate_key(['subscription_id','sku']) }} AS subscription_key,
+    {{ dbt_utils.generate_surrogate_key(['order_id','platform_name']) }} AS order_key,
+    {{ dbt_utils.generate_surrogate_key(['platform_name','store_name']) }} AS platform_key,
+    {{ dbt_utils.generate_surrogate_key(['brand']) }} AS brand_key,
+    {{ dbt_utils.generate_surrogate_key(['product_id', 'sku','platform_name']) }} AS product_key,
+    {{ dbt_utils.generate_surrogate_key(['subscription_id','sku']) }} AS subscription_key,
     date,
     transaction_type,
     reason,

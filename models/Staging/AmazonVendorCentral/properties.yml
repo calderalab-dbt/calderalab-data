@@ -1,0 +1,91 @@
+version: 2
+models:
+  - name: NetPureProductMarginReport
+    description: NetPureProductMarginReport
+    config: 
+      materialized: 'incremental'
+      incremental_strategy: 'merge'
+      partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+      cluster_by: ['startDate' , 'asin']
+      unique_key: ['startDate' , 'asin']
+
+  - name: RetailProcurementOrdersStatus
+    description: RetailProcurementOrdersStatus
+    config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: {'field': 'purchaseOrderDate', 'data_type': 'timestamp', 'granularity': 'day'}
+        cluster_by: ['purchaseOrderNumber']
+        unique_key: ['purchaseOrderDate','purchaseOrderNumber','purchaseOrderStatus','itemStatus_buyerProductIdentifier']
+
+  - name: VendorInventoryReportByManufacturing
+    description: VendorInventoryReportByManufacturing
+    config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+        cluster_by: ['startDate', 'asin']
+        unique_key: ['marketplaceId','startDate', 'asin']
+
+  - name: VendorInventoryReportBySourcing
+    description: VendorInventoryReportBySourcing
+    config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+        cluster_by: ['startDate', 'asin']
+        unique_key: ['marketplaceId','startDate', 'asin']
+
+  - name: VendorSalesReportByManufacturing
+    description: VendorSalesReportByManufacturing
+    config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+        cluster_by: ['startDate' , 'asin']
+        unique_key: ['marketplaceId','startDate' , 'asin']
+
+  - name: VendorSalesReportBySourcing
+    description: VendorSalesReportBySourcing
+    config:
+        materialized: 'incremental'
+        incremental_strategy: 'merge'
+        partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+        cluster_by: ['marketplaceId','startDate' , 'asin']
+        unique_key: ['marketplaceId','startDate' , 'asin']
+
+  - name: VendorTrafficReport
+    description: VendorTrafficReport
+    config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge' 
+        partition_by: {'field': 'startDate', 'data_type': 'timestamp'}
+        cluster_by: ['startDate' , 'asin'] 
+        unique_key: ['startDate' , 'asin']
+
+  - name: VendorRealTimeSalesReport
+    description: RealTimeSales
+    config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge' 
+        partition_by: {'field': 'endTime' , 'data_type': 'timestamp', 'granularity': 'day'}
+        cluster_by: ['ReportstartDate' , 'asin'] 
+        unique_key: ['startTime','endTime', 'asin']        
+
+  - name: VendorRealTimeTrafficReport
+    description: RealTimeTraffic
+    config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge' 
+        partition_by: {'field': 'endTime', 'data_type': 'timestamp','granularity': 'day'}
+        cluster_by: ['ReportstartDate' , 'asin'] 
+        unique_key: ['startTime','endTime' , 'asin']  
+
+  - name: VendorRealTimeInventoryReport
+    description: RealTimeTraffic
+    config: 
+        materialized: 'incremental'
+        incremental_strategy: 'merge' 
+        partition_by: {'field': 'endTime', 'data_type': 'timestamp','granularity': 'day'}
+        cluster_by: ['ReportstartDate' , 'asin'] 
+        unique_key: ['startTime','endTime' , 'asin']                   
