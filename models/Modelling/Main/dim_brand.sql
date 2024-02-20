@@ -2,7 +2,7 @@
 -- depends_on: {{ ref('dim_brand_amazonseller') }}
 
 -- Returns a list of relations that match schema_pattern.table_pattern%
-{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'dim_brand%') %}
+{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'dim_brand_%') %}
 
 select * {{exclude()}} (row_num) from (
 select *, row_number() over(partition by brand_name, year, month order by effective_start_date desc) row_num from (
