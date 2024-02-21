@@ -15,7 +15,7 @@ vars:
   raw_schema: "Caldera_Labs"
   mdl_database: "caldera-labs"
   # mdl_schema: "dev_edm_main" 
-  # mdl_schema: "dev_edm" 
+  mdl_schema: "{{env_var('DBT_RUN_ENV')}}_edm"
  
   #prerequisite_mdl_schema: "dev_edm_prep"
   prerequisite_mdl_schema: "{{env_var('DBT_RUN_ENV')}}_edm"
