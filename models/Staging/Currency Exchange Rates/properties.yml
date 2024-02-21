@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: ExchangeRates
+    description: Model for loading Currency Exchange Rates on daily basis source from Daton Raw Ingested table
+    config:
+      materialized: incremental
+      incremental_strategy: merge
+      cluster_by: ['date','from_currency_code','to_currency_code']
+      unique_key: ['date','from_currency_code','to_currency_code']

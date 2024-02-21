@@ -1,7 +1,7 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: "edm"
+name: "edm_data_transformation"
 version: "1.0.0"
 config-version: 2
  
@@ -15,10 +15,10 @@ vars:
   raw_schema: "Caldera_Labs"
   mdl_database: "caldera-labs"
   # mdl_schema: "dev_edm_main" 
-  mdl_schema: "dev_edm" 
+  # mdl_schema: "dev_edm" 
  
   #prerequisite_mdl_schema: "dev_edm_prep"
-  prerequisite_mdl_schema: "dev_edm"
+  prerequisite_mdl_schema: "{{env_var('DBT_RUN_ENV')}}_edm"
   surrogate_key_treat_nulls_as_empty_strings: True
  
   # Set the models to False in case you dont want them to be materialised
