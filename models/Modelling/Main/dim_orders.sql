@@ -1,10 +1,11 @@
 -- depends_on: {{ ref('dim_orders_shopify') }}
+-- depends_on: {{ ref('dim_orders_amazonseller') }}
 {{ config(
   materialized='table'
 ) }}
 
 -- Returns a list of relations that match schema_pattern.table_pattern%
-{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'dim_orders_shopify%') %}
+{% set relations = dbt_utils.get_relations_by_pattern(var('prerequisite_mdl_schema'), 'dim_orders_%') %}
 
 {% for i in relations %}
         select

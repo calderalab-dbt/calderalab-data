@@ -51,6 +51,7 @@ GROUP by 1
   WHERE
     transaction_type = 'Order'
     AND is_cancelled = FALSE
+    AND platform_key like '%84ef9'
   GROUP BY
     1),
 
@@ -62,6 +63,7 @@ GROUP by 1
     {{ref('fact_orders')}}
   WHERE
     transaction_type = 'Return'
+    AND platform_key like '%84ef9'
   GROUP BY
     1 ),
 
